@@ -18,7 +18,7 @@ import java.util.Properties;
 
 public class Generator {
 
-    private String driveName,username,password,url;
+    private String driveName, username, password, url;
     private String[] tables;
     private String packageName;
     private String author;
@@ -39,17 +39,18 @@ public class Generator {
         new Generator().generator();
     }
 
-    public void generator(){
+    public void generator() {
         //全局
         GlobalConfig gc = new GlobalConfig();
         gc.setAuthor(author)
                 .setOutputDir("src/main/java")
-                .setOpen(false)
                 .setFileOverride(true)
                 .setActiveRecord(false)
                 .setBaseResultMap(true)
                 .setBaseColumnList(true)
-                .setEntityName("%sDO");
+                .setEntityName("%sDO")
+                .setServiceName("%sService")
+                .setServiceImplName("%sServiceImpl");
 
         //数据源
         DataSourceConfig ds = new DataSourceConfig();
@@ -57,13 +58,16 @@ public class Generator {
                 .setDriverName(driveName)
                 .setUsername(username)
                 .setPassword(password)
-                .setUrl(url);
+                .setUrl(url)
+                .setTypeConvert(new MysqlTypeConvertCustom());
 
         //数据表
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel)
                 .setEntityBuilderModel(true)
                 .setEntityLombokModel(true)
+                .setEntityTableFieldAnnotationEnable(false)
+                .setEntitySerialVersionUID(true)
                 .setInclude(tables);
 
         //包
