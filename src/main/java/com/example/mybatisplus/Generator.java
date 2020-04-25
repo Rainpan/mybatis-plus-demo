@@ -3,10 +3,8 @@ package com.example.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import org.springframework.core.io.ClassPathResource;
@@ -16,6 +14,14 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * mybatis plus 自动生成代码
+ * <p>
+ * -- 1.即使EntityTableFieldAnnotationEnable设置为false,下列情况仍会设置为true,
+ * --  1) CaptitalMode设置了true,但表字段名为小写
+ * --  2) columnNaming设置为underline_to_camel,并且字段名包含大写
+ * --  3) 字段名与设置的columnNaming模式转换后的字段名不相等
+ */
 public class Generator {
 
     private String driveName, username, password, url;
@@ -48,6 +54,7 @@ public class Generator {
                 .setActiveRecord(false)
                 .setBaseResultMap(true)
                 .setBaseColumnList(true)
+                .setDateType(DateType.ONLY_DATE)
                 .setEntityName("%sDO")
                 .setServiceName("%sService")
                 .setServiceImplName("%sServiceImpl");
@@ -74,12 +81,19 @@ public class Generator {
         PackageConfig pc = new PackageConfig();
         pc.setParent(packageName);
 
+        // 模板
+        TemplateConfig tc = new TemplateConfig();
+        tc.setController(null)
+                .setEntity("template/entity.java")
+                .setXml("template/mapper.xml");
+
         AutoGenerator ag = new AutoGenerator();
         ag.setTemplateEngine(new FreemarkerTemplateEngine())
                 .setGlobalConfig(gc)
                 .setDataSource(ds)
                 .setStrategy(strategy)
                 .setPackageInfo(pc)
+                .setTemplate(tc)
                 .execute();
     }
 }
